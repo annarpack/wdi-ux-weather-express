@@ -1,0 +1,26 @@
+{
+  "name": "weather_express",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "axios": "^0.16.2",
+    "body-parser": "^1.18.2",
+    "cors": "^2.8.4",
+    "dotenv": "^4.0.0",
+    "express": "^4.16.2",
+    "gitignore": "^0.6.0",
+    "mustache-express": "^1.2.5",
+    "pg-promise": "^7.0.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@git.generalassemb.ly:flyhigh/weather_express.git"
+  },
+  "author": "",
+  "license": "ISC"
+}
