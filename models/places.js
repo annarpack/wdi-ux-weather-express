@@ -4,6 +4,7 @@ const axios = require('axios');
 const Places = {}
 
 Places.search = (req, res, next) => {
+  //console.log('places.search');
     const { searchTerm } = req.params;
     axios.post(
         `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${searchTerm}&types=(cities)&key=${process.env.GOOGLE_API_KEY}`
@@ -15,6 +16,7 @@ Places.search = (req, res, next) => {
 }
 
 Places.returnFive = (req, res, next) => {
+    //console.log('places.returnFive');
     const arrayResults = [];
     let city = "";
     let state = "";
@@ -42,6 +44,7 @@ Places.returnFive = (req, res, next) => {
 }
 
 Places.searchPlaceId = (req, res, next) => {
+    //console.log('places.searchPlaceId');
     const { placeId } = req.params;
     axios.get(`https://maps.googleapis.com/maps/api/geocode/json?place_id=${placeId}&key=${process.env.GOOGLE_API_KEY}`)
         .then(response => {
@@ -55,6 +58,7 @@ Places.searchPlaceId = (req, res, next) => {
             const long = res.locals.placeIdResults.geometry.location.lng;
             if (res.locals.placeIdResults.address_components.length > 3) {
               city = res.locals.placeIdResults.address_components[0].long_name;
+              console.log('city', city);
               state = res.locals.placeIdResults.address_components[2].short_name;
               country = res.locals.placeIdResults.address_components[3].long_name;
             } else {
@@ -72,15 +76,18 @@ Places.searchPlaceId = (req, res, next) => {
   }
 
   Places.findAll = (req, res, next) => {
-  db.manyOrNone('SELECT * FROM places').then(places => {
-    res.locals.places = places;
-    next();
-  }).catch(err => console.log("findAll err", err))
+    //console.log('findAll');
+    db.manyOrNone('SELECT * FROM places').then(places => {
+      //console.log('places', places)
+      res.locals.places = places;
+      next();
+    }).catch(err => console.log("findAll err", err))
   }
 
   Places.weatherData = (req, res, next) => {
-
+    //console.log('weatherData');
     const places = res.locals.places;
+    //console.log('places', res.locals.places)
     let weatherCalls = [];
 
     places.forEach(function(place){
@@ -93,11 +100,11 @@ Places.searchPlaceId = (req, res, next) => {
           res.locals.weatherData.push(response.data);
         })
         next();
-      })
-    }
+      }).catch(err => console.log("weatherData err", err))
+  }
 
 Places.findByPlaceId = (req,res,next) => {
-  const {id} = req.params;
+  const { id } = req.params;
   db.one(`SELECT lat, long from PLACES WHERE id = $1`, [id])
   .then(data => {
       axios(`https://api.darksky.net/forecast/${process.env.DARKSKY_API}/${data.lat},${data.long}`)
@@ -105,7 +112,7 @@ Places.findByPlaceId = (req,res,next) => {
             res.locals.onePlaceData = onePlaceData.data;
             next();
             }
-         )
+         ).catch(err => console.log("findByPlaceId axios err", err))
     })
 }
 
